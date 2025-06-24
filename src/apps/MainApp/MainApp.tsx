@@ -10,6 +10,7 @@ import {GroupContactsDto} from 'src/types/dto/GroupContactsDto';
 import {DATA_CONTACT, DATA_GROUP_CONTACT} from 'src/__data__';
 
 export const MainApp = () => {
+  
   const contactsState = useState<ContactDto[]>(DATA_CONTACT);
   const favoriteContactsState = useState<FavoriteContactsDto>([
     DATA_CONTACT[0].id,
