@@ -1,23 +1,32 @@
-import React, {useState} from 'react';
+import {useEffect} from 'react';
 import './MainApp.scss';
 import {ThemeProvider} from 'react-bootstrap';
 import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import {Layout} from 'src/components/Layout';
 import {ContactListPage, GroupPage, ContactPage, FavoritListPage, GroupListPage} from 'src/pages';
-import {ContactDto} from 'src/types/dto/ContactDto';
-import {FavoriteContactsDto} from 'src/types/dto/FavoriteContactsDto';
-import {GroupContactsDto} from 'src/types/dto/GroupContactsDto';
-import {DATA_CONTACT, DATA_GROUP_CONTACT} from 'src/__data__';
+import { useAppDispatch, useAppSelector } from 'src/store/hooks';
+import { fetchContacts, fetchGroups, toggleFavoriteActionCreator } from 'src/store/actions';
 
 export const MainApp = () => {
-  const contactsState = useState<ContactDto[]>(DATA_CONTACT);
-  const favoriteContactsState = useState<FavoriteContactsDto>([
-    DATA_CONTACT[0].id,
-    DATA_CONTACT[1].id,
-    DATA_CONTACT[2].id,
-    DATA_CONTACT[3].id
-  ]);
-  const groupContactsState = useState<GroupContactsDto[]>(DATA_GROUP_CONTACT);
+  
+  const contactsState = useAppSelector(state => state.contacts.contacts)
+  const groupContactsState = useAppSelector(state => state.contacts.groups)
+  const favoriteContactsState = useAppSelector(state => state.contacts.favorites)
+
+  const dispatch = useAppDispatch()
+
+  useEffect(() => {
+    dispatch(fetchContacts())
+    dispatch(fetchGroups())
+  }, [])
+
+  useEffect(() => {
+    if (contactsState.length) {
+      dispatch(toggleFavoriteActionCreator(contactsState[0].id))
+      dispatch(toggleFavoriteActionCreator(contactsState[1].id))
+      dispatch(toggleFavoriteActionCreator(contactsState[2].id))
+    }
+  }, [contactsState.length])
 
   return (
     <ThemeProvider
