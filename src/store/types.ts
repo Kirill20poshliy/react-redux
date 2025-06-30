@@ -9,70 +9,133 @@ export interface ContactsState {
 }
 
 export enum ContactsActionTypes {
-  FETCH_CONTACTS_REQUEST = 'FETCH_CONTACTS_REQUEST',
-  FETCH_CONTACTS_SUCCESS = 'FETCH_CONTACTS_SUCCESS',
-  FETCH_CONTACTS_FAILURE = 'FETCH_CONTACTS_FAILURE',
-  
-  FETCH_GROUPS_REQUEST = 'FETCH_GROUPS_REQUEST',
-  FETCH_GROUPS_SUCCESS = 'FETCH_GROUPS_SUCCESS',
-  FETCH_GROUPS_FAILURE = 'FETCH_GROUPS_FAILURE',
-  
+  ADD_CONTACT = 'ADD_CONTACT',
+  SET_CONTACTS = 'SET_CONTACTS',
+  DELETE_CONTACT = 'DELETE_CONTACT',
+  EDIT_CONTACT = 'EDIT_CONTACT',
   TOGGLE_FAVORITE = 'TOGGLE_FAVORITE',
-  
-  SET_LOADING = 'SET_LOADING',
-  SET_ERROR = 'SET_ERROR'
+  ADD_GROUP = 'ADD_GROUP',
+  SET_GROUPS = 'SET_GROUPS',
+  DELETE_GROUP = 'DELETE_GROUP',
+  EDIT_GROUP = 'EDIT_GROUP',
+  ADD_CONTACT_TO_GROUP = 'ADD_CONTACT_TO_GROUP',
+  DELETE_CONTACT_FROM_GROUP = 'DELETE_CONTACT_FROM_GROUP',
+  FETCH_CONTACTS = 'FETCH_CONTACTS',
+  FETCH_CONTACTS_SUCCESS = 'FETCH_CONTACTS_SUCCESS',
+  FETCH_CONTACTS_ERROR = 'FETCH_CONTACTS_ERROR',
+  FETCH_GROUPS = 'FETCH_GROUPS',
+  FETCH_GROUPS_SUCCESS = 'FETCH_GROUPS_SUCCESS',
+  FETCH_GROUPS_ERROR = 'FETCH_GROUPS_ERROR',
+  SAVE_CONTACT = 'SAVE_CONTACT',
+  SAVE_GROUP = 'SAVE_GROUP'
 }
 
-interface FetchContactsRequestAction {
-  type: ContactsActionTypes.FETCH_CONTACTS_REQUEST;
+interface ISetContactsAction {
+  type: ContactsActionTypes.SET_CONTACTS;
+  payload: ContactDto[]
 }
 
-interface FetchContactsSuccessAction {
-  type: ContactsActionTypes.FETCH_CONTACTS_SUCCESS;
-  payload: ContactDto[];
+interface IAddContactAction {
+  type: ContactsActionTypes.ADD_CONTACT;
+  payload: ContactDto;
 }
 
-interface FetchContactsFailureAction {
-  type: ContactsActionTypes.FETCH_CONTACTS_FAILURE;
-  payload: string;
+interface IDeleteContactAction {
+  type: ContactsActionTypes.DELETE_CONTACT;
+  payload: ContactDto['id'];
 }
 
-interface FetchGroupsRequestAction {
-  type: ContactsActionTypes.FETCH_GROUPS_REQUEST;
+interface IEditContactAction {
+  type: ContactsActionTypes.EDIT_CONTACT;
+  payload: {id: ContactDto['id'], data: ContactDto}
 }
 
-interface FetchGroupsSuccessAction {
-  type: ContactsActionTypes.FETCH_GROUPS_SUCCESS;
-  payload: GroupContactsDto[];
-}
-
-interface FetchGroupsFailureAction {
-  type: ContactsActionTypes.FETCH_GROUPS_FAILURE;
-  payload: string;
-}
-
-interface ToggleFavoriteAction {
+interface IToggleFavoriteAction {
   type: ContactsActionTypes.TOGGLE_FAVORITE;
   payload: ContactDto['id'];
 }
 
-interface SetLoadingAction {
-  type: ContactsActionTypes.SET_LOADING;
-  payload: boolean;
+interface IAddGroupAction {
+  type: ContactsActionTypes.ADD_GROUP;
+  payload: GroupContactsDto
 }
 
-interface SetErrorAction {
-  type: ContactsActionTypes.SET_ERROR;
-  payload: string | null;
+interface ISetGroupsAction {
+  type: ContactsActionTypes.SET_GROUPS;
+  payload: GroupContactsDto[]
+}
+
+interface IDeleteGroupAction {
+  type: ContactsActionTypes.DELETE_GROUP;
+  payload: GroupContactsDto['id']
+}
+
+interface IEditGroupAction {
+  type: ContactsActionTypes.EDIT_GROUP;
+  payload: {id: GroupContactsDto['id'], data: GroupContactsDto}
+}
+
+interface IAddContactToGroupAction {
+  type: ContactsActionTypes.ADD_CONTACT_TO_GROUP;
+  payload: {contactId: ContactDto['id'], groupId: GroupContactsDto['id']}
+}
+
+interface IDeleteContactFromGroupAction {
+  type: ContactsActionTypes.DELETE_CONTACT_FROM_GROUP;
+  payload: {contactId: ContactDto['id'], groupId: GroupContactsDto['id']}
+}
+
+interface IFetchContactsAction {
+  type: ContactsActionTypes.FETCH_CONTACTS
+}
+
+interface IFetchContactsSuccessAction {
+  type: ContactsActionTypes.FETCH_CONTACTS_SUCCESS
+}
+
+interface IFetchContactsErrorAction {
+  type: ContactsActionTypes.FETCH_CONTACTS_ERROR
+}
+
+interface IFetchGroupsAction {
+  type: ContactsActionTypes.FETCH_GROUPS
+}
+
+interface IFetchGroupsSuccessAction {
+  type: ContactsActionTypes.FETCH_GROUPS_SUCCESS
+}
+
+interface IFetchGroupsErrorAction {
+  type: ContactsActionTypes.FETCH_GROUPS_ERROR
+}
+
+interface ISaveContactAction {
+  type: ContactsActionTypes.SAVE_CONTACT;
+  payload: ContactDto
+}
+
+interface ISaveGroupAction {
+  type: ContactsActionTypes.SAVE_GROUP;
+  payload: GroupContactsDto
 }
 
 export type ContactsActions =
-  | FetchContactsRequestAction
-  | FetchContactsSuccessAction
-  | FetchContactsFailureAction
-  | FetchGroupsRequestAction
-  | FetchGroupsSuccessAction
-  | FetchGroupsFailureAction
-  | ToggleFavoriteAction
-  | SetLoadingAction
-  | SetErrorAction;
+  | ISetContactsAction
+  | IAddContactAction
+  | IDeleteContactAction
+  | IEditContactAction
+  | IToggleFavoriteAction
+  | ISetGroupsAction
+  | IAddGroupAction
+  | IDeleteGroupAction
+  | IEditGroupAction
+  | IAddContactToGroupAction
+  | IDeleteContactFromGroupAction
+  | IFetchContactsAction
+  | IFetchGroupsAction
+  | ISaveContactAction
+  | ISaveGroupAction
+  | IFetchContactsSuccessAction
+  | IFetchContactsErrorAction
+  | IFetchGroupsSuccessAction
+  | IFetchGroupsErrorAction

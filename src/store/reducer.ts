@@ -1,9 +1,8 @@
 import { ContactsState, ContactsActions, ContactsActionTypes } from './types';
-import { DATA_CONTACT, DATA_GROUP_CONTACT } from 'src/__data__';
 
 const initialState: ContactsState = {
-  contacts: DATA_CONTACT,
-  groups: DATA_GROUP_CONTACT,
+  contacts: [],
+  groups: [],
   favorites: [],
 };
 
@@ -12,38 +11,41 @@ const contactsReducer = (
   action: ContactsActions
 ): ContactsState => {
   switch (action.type) {
-    case ContactsActionTypes.FETCH_CONTACTS_REQUEST:
+    case ContactsActionTypes.SET_CONTACTS:
       return {
         ...state,
-      };
-      
-    case ContactsActionTypes.FETCH_CONTACTS_SUCCESS:
+        contacts: action.payload
+      }
+
+    case ContactsActionTypes.ADD_CONTACT:
       return {
         ...state,
-        contacts: action.payload,
-      };
-      
-    case ContactsActionTypes.FETCH_CONTACTS_FAILURE:
+        contacts: [
+          ...state.contacts,
+          action.payload
+        ]
+      }
+    
+    case ContactsActionTypes.DELETE_CONTACT:
       return {
         ...state,
-      };
-      
-    case ContactsActionTypes.FETCH_GROUPS_REQUEST:
-      return {
-        ...state,
-      };
-      
-    case ContactsActionTypes.FETCH_GROUPS_SUCCESS:
-      return {
-        ...state,
-        groups: action.payload,
-      };
-      
-    case ContactsActionTypes.FETCH_GROUPS_FAILURE:
-      return {
-        ...state,
-      };
-      
+        contacts: state.contacts.filter(contact => contact.id !== action.payload)
+      }
+
+    case ContactsActionTypes.EDIT_CONTACT:
+      const contactToEdit = state.contacts.find(contact => contact.id === action.payload.id)
+      if (contactToEdit) {
+        const editedContact = {
+          ...contactToEdit,
+          ...action.payload.data
+        }
+        return {
+          ...state,
+          contacts: state.contacts.map(contact => (contact.id === action.payload.id ? editedContact : contact))
+        }
+      }
+      return state
+
     case ContactsActionTypes.TOGGLE_FAVORITE:
       const isFavorite = state.favorites.includes(action.payload);
       return {
@@ -52,17 +54,67 @@ const contactsReducer = (
           ? state.favorites.filter(id => id !== action.payload)
           : [...state.favorites, action.payload]
       };
-      
-    case ContactsActionTypes.SET_LOADING:
+
+    case ContactsActionTypes.SET_GROUPS:
       return {
         ...state,
-      };
-      
-    case ContactsActionTypes.SET_ERROR:
+        groups: action.payload
+      }
+
+    case ContactsActionTypes.ADD_GROUP:
       return {
         ...state,
+        groups: [
+          ...state.groups,
+          action.payload
+        ]
       };
-      
+    
+    case ContactsActionTypes.DELETE_GROUP:
+      return {
+        ...state,
+        groups: state.groups.filter(group => group.id !== action.payload)
+      }
+
+    case ContactsActionTypes.EDIT_GROUP:
+      const groupToEdit = state.groups.find(group => group.id === action.payload.id)
+      if (groupToEdit) {
+        const editedGroup = {
+          ...groupToEdit,
+          ...action.payload.data
+        }
+        return {
+          ...state,
+          groups: state.groups.map(group => (group.id === action.payload.id ? editedGroup : group))
+        }
+      }
+      return state
+
+    case ContactsActionTypes.ADD_CONTACT_TO_GROUP:
+      return {
+        ...state,
+        groups: state.groups.map(group => 
+          group.id === action.payload.groupId
+            ? {
+                ...group,
+                contactIds: [...group.contactIds, action.payload.contactId]
+              }
+            : group
+        )
+      }
+    
+    case ContactsActionTypes.DELETE_CONTACT_FROM_GROUP:
+      const groupToDeleteContact = state.groups.find(group => group.id === action.payload.groupId)
+      if (groupToDeleteContact) {
+        const filteredGroupContacts = groupToDeleteContact.contactIds.filter(contact => contact !== action.payload.contactId)
+        groupToDeleteContact.contactIds = filteredGroupContacts
+        return {
+          ...state,
+          groups: state.groups.map(group => (group.id === action.payload.groupId ? groupToDeleteContact : group))
+        }
+      }
+      return state;
+
     default:
       return state;
   }

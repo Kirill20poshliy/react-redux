@@ -4,81 +4,95 @@ import {
   ContactsActionTypes,
   ContactsActions,
 } from './types';
+import contactsApi from '../api/api'
+import { ThunkAction } from 'redux-thunk';
+import { RootState } from './store';
 
-export const fetchContactsRequest = (): ContactsActions => ({
-  type: ContactsActionTypes.FETCH_CONTACTS_REQUEST
-});
+export const setContactsActionCreator = (contacts: ContactDto[]): ContactsActions => ({
+  type: ContactsActionTypes.SET_CONTACTS,
+  payload: contacts
+})
 
-// export const fetchContactsSuccess = (contacts: ContactDto[]): FetchContactsSuccessAction => ({
-//   type: ContactsActionTypes.FETCH_CONTACTS_SUCCESS,
-//   payload: contacts
-// });
+export const addContactActionCreator = (contactData: ContactDto): ContactsActions => ({
+  type: ContactsActionTypes.ADD_CONTACT,
+  payload: contactData
+})
 
-// export const fetchContactsFailure = (error: string): FetchContactsFailureAction => ({
-//   type: ContactsActionTypes.FETCH_CONTACTS_FAILURE,
-//   payload: error
-// });
+export const deleteContactActionCreator = (id: ContactDto['id']): ContactsActions => ({
+  type: ContactsActionTypes.DELETE_CONTACT,
+  payload: id
+})
 
-export const fetchGroupsRequest = (): ContactsActions => ({
-  type: ContactsActionTypes.FETCH_GROUPS_REQUEST
-});
+export const editContactActionCreator = (id: ContactDto['id'], contactData: ContactDto): ContactsActions => ({
+  type: ContactsActionTypes.EDIT_CONTACT,
+  payload: {id, data: contactData}
+})
 
-// export const fetchGroupsSuccess = (groups: GroupContactsDto[]): FetchGroupsSuccessAction => ({
-//   type: ContactsActionTypes.FETCH_GROUPS_SUCCESS,
-//   payload: groups
-// });
+export const toggleFavoriteActionCreator = (id: ContactDto['id']): ContactsActions => ({
+  type: ContactsActionTypes.TOGGLE_FAVORITE,
+  payload: id
+})
 
-// export const fetchGroupsFailure = (error: string): FetchGroupsFailureAction => ({
-//   type: ContactsActionTypes.FETCH_GROUPS_FAILURE,
-//   payload: error
-// });
+export const setGroupsActionCreator = (groups: GroupContactsDto[]): ContactsActions => ({
+  type: ContactsActionTypes.SET_GROUPS,
+  payload: groups
+})
 
-// export const toggleFavorite = (contactId: ContactDto['id']): ToggleFavoriteAction => ({
-//   type: ContactsActionTypes.TOGGLE_FAVORITE,
-//   payload: contactId
-// });
+export const addGroupActionCreator = (groupData: GroupContactsDto): ContactsActions => ({
+  type: ContactsActionTypes.ADD_GROUP,
+  payload: groupData
+})
 
-// export const setLoading = (isLoading: boolean): SetLoadingAction => ({
-//   type: ContactsActionTypes.SET_LOADING,
-//   payload: isLoading
-// });
+export const deleteGroupActionCreator = (id: GroupContactsDto['id']): ContactsActions => ({
+  type: ContactsActionTypes.DELETE_GROUP,
+  payload: id
+})
 
-// export const setError = (error: string | null): SetErrorAction => ({
-//   type: ContactsActionTypes.SET_ERROR,
-//   payload: error
-// });
+export const editGroupActionCreator = (id: GroupContactsDto['id'], groupData: GroupContactsDto): ContactsActions => ({
+  type: ContactsActionTypes.EDIT_GROUP,
+  payload: {id, data: groupData}
+})
 
-// export const fetchContacts = () => {
-//   return async (dispatch: any) => {
-//     dispatch(fetchContactsRequest());
-//     dispatch(setLoading(true));
-    
-//     try {
-//       const response = await fetch('/api/contacts');
-//       const data = await response.json();
-//       dispatch(fetchContactsSuccess(data));
-//     } catch (error) {
-//       dispatch(fetchContactsFailure(error.message));
-//     } finally {
-//       dispatch(setLoading(false));
-//     }
-//   };
-// };
+export const addContactToGroupActionCreator = (
+  contactId: ContactDto['id'], 
+  groupId: GroupContactsDto['id']
+): ContactsActions => ({
+  type: ContactsActionTypes.ADD_CONTACT_TO_GROUP,
+  payload: {contactId, groupId}
+})
 
-// export const fetchGroups = () => {
-//   return async (dispatch: any) => {
-//     dispatch(fetchGroupsRequest());
-//     dispatch(setLoading(true));
-    
-//     try {
-//       // Здесь будет реальный API-запрос
-//       const response = await fetch('/api/groups');
-//       const data = await response.json();
-//       dispatch(fetchGroupsSuccess(data));
-//     } catch (error) {
-//       dispatch(fetchGroupsFailure(error.message));
-//     } finally {
-//       dispatch(setLoading(false));
-//     }
-//   };
-// };
+export const deleteContactFromGroupActionCreator = (
+  contactId: ContactDto['id'], 
+  groupId: GroupContactsDto['id']
+): ContactsActions => ({
+  type: ContactsActionTypes.DELETE_CONTACT_FROM_GROUP,
+  payload: {contactId, groupId}
+})
+
+export const fetchContacts = (): ThunkAction<void, RootState, void, ContactsActions> => {
+  return async (dispatch) => {
+    dispatch({type: ContactsActionTypes.FETCH_CONTACTS})
+
+    const res = await contactsApi.getContacts()
+    if (res) {
+      dispatch(setContactsActionCreator(res))
+      dispatch({type: ContactsActionTypes.FETCH_CONTACTS_SUCCESS})
+    } else {
+      dispatch({type: ContactsActionTypes.FETCH_CONTACTS_ERROR})
+    }
+  }
+}
+
+export const fetchGroups = (): ThunkAction<void, RootState, void, ContactsActions> => {
+  return async (dispatch) => {
+    dispatch({type: ContactsActionTypes.FETCH_GROUPS})
+
+    const res = await contactsApi.getGroups()
+    if (res) {
+      dispatch(setGroupsActionCreator(res))
+      dispatch({type: ContactsActionTypes.FETCH_GROUPS_SUCCESS})
+    } else {
+      dispatch({type: ContactsActionTypes.FETCH_GROUPS_ERROR})
+    }
+  }
+}
