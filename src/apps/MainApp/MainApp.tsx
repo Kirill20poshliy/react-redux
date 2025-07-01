@@ -4,29 +4,27 @@ import {ThemeProvider} from 'react-bootstrap';
 import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import {Layout} from 'src/components/Layout';
 import {ContactListPage, GroupPage, ContactPage, FavoritListPage, GroupListPage} from 'src/pages';
-import { useAppDispatch, useAppSelector } from 'src/store/hooks';
-import { fetchContacts, fetchGroups, toggleFavoriteActionCreator } from 'src/store/actions';
+import { useDispatch, useSelector } from 'react-redux';
+import { useGetContactsQuery } from 'src/store/contacts/contactsSlice';
+import { useGetGroupsQuery } from 'src/store/groups/groupsSlice';
+import { addToFavorites } from 'src/store/favorites/favoritesSlice';
+import { RootState } from 'src/store/store';
 
 export const MainApp = () => {
   
-  const contactsState = useAppSelector(state => state.contacts.contacts)
-  const groupContactsState = useAppSelector(state => state.contacts.groups)
-  const favoriteContactsState = useAppSelector(state => state.contacts.favorites)
+  const favoriteContactsState = useSelector((state: RootState) => state.favorites)
+  const {data: contactsState} = useGetContactsQuery()
+  const {data: groupContactsState} = useGetGroupsQuery()
 
-  const dispatch = useAppDispatch()
-
-  useEffect(() => {
-    dispatch(fetchContacts())
-    dispatch(fetchGroups())
-  }, [])
+  const dispatch = useDispatch()
 
   useEffect(() => {
-    if (contactsState.length) {
-      dispatch(toggleFavoriteActionCreator(contactsState[0].id))
-      dispatch(toggleFavoriteActionCreator(contactsState[1].id))
-      dispatch(toggleFavoriteActionCreator(contactsState[2].id))
+    if (contactsState?.length) {
+      dispatch(addToFavorites(contactsState[0].id))
+      dispatch(addToFavorites(contactsState[1].id))
+      dispatch(addToFavorites(contactsState[2].id))
     }
-  }, [contactsState.length])
+  }, [contactsState?.length])
 
   return (
     <ThemeProvider
@@ -38,48 +36,48 @@ export const MainApp = () => {
           <Route path="/" element={<Layout />}>
             <Route index element={
               <ContactListPage
-                contactsState={contactsState}
+                contactsState={contactsState ?? []}
                 favoriteContactsState={favoriteContactsState}
-                groupContactsState={groupContactsState}
+                groupContactsState={groupContactsState ?? []}
               />
             } />
             <Route path="contact">
               <Route index element={
                 <ContactListPage
-                  contactsState={contactsState}
+                  contactsState={contactsState ?? []}
                   favoriteContactsState={favoriteContactsState}
-                  groupContactsState={groupContactsState}
+                  groupContactsState={groupContactsState ?? []}
                 />
               } />
               <Route path=":contactId" element={
                 <ContactPage
-                  contactsState={contactsState}
+                  contactsState={contactsState ?? []}
                   favoriteContactsState={favoriteContactsState}
-                  groupContactsState={groupContactsState}
+                  groupContactsState={groupContactsState ?? []}
                 />
               } />
             </Route>
             <Route path="groups">
               <Route index element={
                 <GroupListPage
-                  contactsState={contactsState}
+                  contactsState={contactsState ?? []}
                   favoriteContactsState={favoriteContactsState}
-                  groupContactsState={groupContactsState}
+                  groupContactsState={groupContactsState ?? []}
                 />
               } />
               <Route path=":groupId" element={
                 <GroupPage
-                  contactsState={contactsState}
+                  contactsState={contactsState ?? []}
                   favoriteContactsState={favoriteContactsState}
-                  groupContactsState={groupContactsState}
+                  groupContactsState={groupContactsState ?? []}
                 />
               } />
             </Route>
             <Route path="favorit" element={
               <FavoritListPage
-                contactsState={contactsState}
+                contactsState={contactsState ?? []}
                 favoriteContactsState={favoriteContactsState}
-                groupContactsState={groupContactsState}
+                groupContactsState={groupContactsState ?? []}
               />
             } />
           </Route>

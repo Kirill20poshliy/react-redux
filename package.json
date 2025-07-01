@@ -48,6 +48,7 @@
     ]
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^2.8.2",
     "@types/redux-thunk": "^2.1.32",
     "react-redux": "^9.2.0",
     "redux": "^5.0.1",

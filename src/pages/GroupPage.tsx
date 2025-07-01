@@ -17,11 +17,11 @@ export const GroupPage = memo<CommonPageProps>(({
   const [groupContacts, setGroupContacts] = useState<GroupContactsDto>();
 
   useEffect(() => {
-    const findGroup = groupContactsState.find(({id}) => id === groupId);
+    const findGroup = groupContactsState?.find(({id}) => id === groupId);
     setGroupContacts(findGroup);
     setContacts(() => {
-      if (findGroup) {
-        return contactsState.filter(({id}) => findGroup.contactIds.includes(id))
+      if (findGroup && contactsState.length) {
+        return contactsState.filter(({id}) => findGroup?.contactIds?.includes(id))
       }
       return [];
     });
