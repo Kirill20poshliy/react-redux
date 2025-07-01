@@ -4,25 +4,22 @@ import {ThemeProvider} from 'react-bootstrap';
 import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import {Layout} from 'src/components/Layout';
 import {ContactListPage, GroupPage, ContactPage, FavoritListPage, GroupListPage} from 'src/pages';
-import { useDispatch, useSelector } from 'react-redux';
-import { useGetContactsQuery } from 'src/store/contacts/contactsSlice';
-import { useGetGroupsQuery } from 'src/store/groups/groupsSlice';
-import { addToFavorites } from 'src/store/favorites/favoritesSlice';
-import { RootState } from 'src/store/store';
+import { observer } from 'mobx-react-lite';
+import favoritesStore from 'src/store/favorites/favoritesStore';
+import contactsStore from 'src/store/contacts/contactsStore';
+import groupsStore from 'src/store/groups/groupsStore';
 
-export const MainApp = () => {
-  
-  const favoriteContactsState = useSelector((state: RootState) => state.favorites)
-  const {data: contactsState} = useGetContactsQuery()
-  const {data: groupContactsState} = useGetGroupsQuery()
+export const MainApp = observer(() => {
 
-  const dispatch = useDispatch()
+  const favoriteContactsState = favoritesStore.favorites
+  const contactsState = contactsStore.contacts
+  const groupContactsState = groupsStore.groups
 
   useEffect(() => {
     if (contactsState?.length) {
-      dispatch(addToFavorites(contactsState[0].id))
-      dispatch(addToFavorites(contactsState[1].id))
-      dispatch(addToFavorites(contactsState[2].id))
+      favoritesStore.setFavorites(contactsState[0].id)
+      favoritesStore.setFavorites(contactsState[1].id)
+      favoritesStore.setFavorites(contactsState[2].id)
     }
   }, [contactsState?.length])
 
@@ -85,4 +82,4 @@ export const MainApp = () => {
       </BrowserRouter>
     </ThemeProvider>
   );
-};
+})
